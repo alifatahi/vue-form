@@ -15,22 +15,20 @@
       <section class="section">
     <div class="container">
        <div class="field">
-          <label class="label">Label</label>
+          <label class="label">Project Name</label>
           <div class="control">
             <input class="input" type="text" placeholder="Text input">
           </div>
-          <p class="help">This is a help text</p>
         </div>
         <div class="field">
-          <label class="label">Label</label>
+          <label class="label">Project Description</label>
           <div class="control">
             <input class="input" type="text" placeholder="Text input">
           </div>
-          <p class="help">This is a help text</p>
         </div>
        </div>
        <div class="buttons">
- 		<button class="button is-primary">Primary</button>
+ 		<button class="button is-primary">Create</button>
  		</div>
   </section>
     </body>
