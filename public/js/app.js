@@ -57,12 +57,10 @@ class Form {
 
     //Get Data
     data() {
-        //set
-        let data = Object.assign({}, this);
-
-        //after set it to let data we remove original & errors
-        delete data.originalData;
-        delete data.errors;
+        let data = {};
+        for (let property in this.originalData) {
+            data[property] = this[property];
+        }
 
         //and return data
         return data;
@@ -74,29 +72,51 @@ class Form {
         for (let field in this.originalData) {
             this[field] = '';
         }
+
+        //clear error
+        this.errors.clear();
+
+    }
+
+    //shorthand for post
+    post(url) {
+        return this.submit('post', url);
+    }
+
+    //shorthand for delete
+    delete(url){
+        return this.submit('delete', url);
     }
 
     //submit form
     submit(requestType, url) {
+        //Use Promise(its on ES6 which means when that things happen i promise do this)
+        return new Promise((resolve, reject) => {
+            //using axios and pass url and data from data object
+            axios[requestType](url, this.data())
+            //when success
+                .then(response => {
+                    this.onSuccess(response.data);
 
-        //using axios and pass url and data from data object
-        axios[requestType](url, this.data())
-        //when success
-            .then(this.onSuccess.bind(this))
-            //when fail
-            .catch(this.onFail.bind(this));
+                    resolve(response.data);
+                })
+                //when fail
+                .catch(error => {
+                    this.onFail(error.response.data.errors);
+                    reject(error.response.data.errors);
+                });
+        });
     }
 
-    //on Success clear error and reset form
-    onSuccess(response) {
-        alert(response.data.message);
-        this.errors.clear();
+    //on Success reset form
+    onSuccess(data) {
+        alert(data.message);
         this.reset();
     }
 
-    onFail(error) {
+    onFail(errors) {
         //when fail we record error and pass it to Errors Class
-        this.errors.record(error.response.data.errors);
+        this.errors.record(errors);
     }
 }
 
@@ -114,7 +134,8 @@ new Vue({
     methods: {
         //when Submit Form Shoot this method
         onSubmit() {
-            this.form.submit('post', '/projects');
+            this.form.post('/projects')
+                .then(response => alert('Wahoo!'));
         },
     }
 });
